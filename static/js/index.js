@@ -12,16 +12,6 @@ const myMap = L.map('mapid', {
   scrollWheelZoom: false
 })
 
-/*
-L.Mapzen.apiKey = 'PUT KEY HERE'
-
-var geocoder = L.Mapzen.geocoder({
-  position: 'topright'
-})
-geocoder.addTo(myMap)
-*/
-
-
 const placeInput = document.getElementById('place_input')
 const placeButton = document.getElementById('place_button')
 const selector = document.getElementById('selector')
@@ -29,16 +19,6 @@ const selectButton = document.getElementById('select_button')
 const possiblePlaces = {}
 
 const nominatim = 'http://nominatim.openstreetmap.org/search/'
-
-////////////////////////////////////////////////////////////
-// Basically, i'm going to have to separate input text by
-// spaces, then join it by plus marks, then append it to
-// the nominatim string and request it with XMLHttpRequest.
-// After that I will have to parse the JSON and get the
-// coordinates that form the polygon or line or point or
-// whatever and make a geojson object from the points. I
-// will probably do that with the Turfjs libary.
-////////////////////////////////////////////////////////////
 
 // make geojson
 // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
@@ -77,17 +57,6 @@ const makeSelectorOptions = (array, selector) => {
   })
 }
 
-// coupled with the selector options thing
-selectButton.addEventListener('click', () => {
-  const obj = possiblePlaces[selector.value]
-  const lyr = L.geoJSON(obj).addTo(myMap)
-  myMap.fitBounds(lyr.getBounds()) 
-})
-
-const dataToDiv = (data, div) => {
-  div.innerHTML = data
-}
-
 const getPlace = url => {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -106,3 +75,11 @@ placeButton.addEventListener('click', () => {
   const searchString = `${nominatim}${placeInput.value}?format=json&polygon_geojson=1`
   getPlace(searchString)
 })
+
+// tightly coupled with the selector options thing
+selectButton.addEventListener('click', () => {
+  const obj = possiblePlaces[selector.value]
+  const lyr = L.geoJSON(obj).addTo(myMap)
+  myMap.fitBounds(lyr.getBounds()) 
+})
+
