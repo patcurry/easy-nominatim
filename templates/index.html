@@ -7,8 +7,6 @@
   <title>title</title>
 
   <link rel='stylesheet' href='https://unpkg.com/leaflet@1.0.3/dist/leaflet.css' />
-  <!-- style sheet for mapzen.js -->
-  <!-- <link rel="stylesheet" href="https://mapzen.com/js/mapzen.css">-->
 
   <style>
 
@@ -25,17 +23,15 @@
   <input id='place_input' type='text' placeholder='place'>
   <input id='place_button' type='submit' value='Submit'>
 
-  <br>
+  <p>
+    <select id='selector'></select>
+    <input id='select_button' type='submit' value='Submit'>
+  </p>
 
   <div id='mapid'></div>
-  <div id='place_select'></div>
+  
   
   <script src='https://unpkg.com/leaflet@1.0.3/dist/leaflet.js'></script>
-
-  <!-- latest version of mapzen.js-->
-  <!--<script src="https://mapzen.com/js/mapzen.js"></script>-->
-
-
 
  <!-- <script src='https://npmcdn.com/@turf/turf@3.14.3/turf.js'></script>-->
   <script src='{% static "js/index.js" %}'></script>

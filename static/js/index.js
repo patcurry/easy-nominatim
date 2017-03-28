@@ -24,7 +24,8 @@ geocoder.addTo(myMap)
 
 const placeInput = document.getElementById('place_input')
 const placeButton = document.getElementById('place_button')
-const placeSelect = document.getElementById('place_select')
+const selector = document.getElementById('selector')
+const selectButton = document.getElementById('select_button')
 const possiblePlaces = {}
 
 const nominatim = 'http://nominatim.openstreetmap.org/search/'
@@ -40,79 +41,48 @@ const nominatim = 'http://nominatim.openstreetmap.org/search/'
 ////////////////////////////////////////////////////////////
 
 // make geojson
-// the nomitim seems to bring in almost geojson. the geojson
-// is missing a few parts, so it cannot be added to the map
-// in it's delivered form.
-
-// this is lifted straight from http://nominatim.openstreetmap.org/js/nominatim-ui.js
-function parse_and_normalize_geojson_string(raw_string){
+// this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
+const normalize_geojson = obj => {
     // normalize places the geometry into a featurecollection, similar to
     // https://github.com/mapbox/geojson-normalize
-    var parsed_geojson = {
+    const geojson = {
         type: "FeatureCollection",
         features: [
             {
                 type: "Feature",
-                geometry: JSON.parse(raw_string),
+                geometry: obj,
                 properties: {}
             }
         ]
-    };
-    return parsed_geojson;
+    }
+    return geojson
 }
 
-function normalize_geojson_string(raw_string){
-    // normalize places the geometry into a featurecollection, similar to
-    // https://github.com/mapbox/geojson-normalize
-    var geojson = {
-        type: "FeatureCollection",
-        features: [
-            {
-                type: "Feature",
-                geometry: raw_string,
-                properties: {}
-            }
-        ]
-    };
-    return geojson;
-}
-
-
-
-// make selector buttons
-const makeSelectorButtons = (array, container) => {
-  container.innerHTML = ''
+// make selector options
+const makeSelectorOptions = (array, selector) => {
+  selector.innerHtml = ''
   array.forEach(p => {
-    // get 
-    const osm_id = p['osm_id']
+    // get the osm data
     const display_name = p['display_name']
     const geojson = p['geojson']
 
-    const btn = document.createElement('button')
-    btn.id = osm_id
+    const option = document.createElement('option')
+    option.value = display_name
     const text = document.createTextNode(display_name)
+    const json = normalize_geojson(geojson)
 
-    const j = normalize_geojson_string(geojson)
-    possiblePlaces[osm_id] = j    
-
-    btn.style.fontWeight = 'bold'
-
-    
-    // this is probably not the best way to do this... but it should work
-    btn.addEventListener('click', () => {
-      const yeah = possiblePlaces[btn.id]
-      const no = L.geoJSON(yeah).addTo(myMap)
-      myMap.fitBounds(no.getBounds())
-    })
-
-
-    btn.appendChild(text)
-    container.appendChild(btn)
-
-   // return btn
+    possiblePlaces[display_name] = json
+    option.appendChild(text)
+    selector.appendChild(option)
   })
 }
 
+// coupled with the selector options thing
+selectButton.addEventListener('click', () => {
+  const obj = possiblePlaces[selector.value]
+  const lyr = L.geoJSON(obj).addTo(myMap)
+  myMap.fitBounds(lyr.getBounds()) 
+})
 
 const dataToDiv = (data, div) => {
   div.innerHTML = data
@@ -124,7 +94,7 @@ const getPlace = url => {
     xhr.open('GET', url, true)
     xhr.onload = () => {
       xhr.readyState === 4 && xhr.status === 200
-      ? makeSelectorButtons(JSON.parse(xhr.responseText), placeSelect)
+      ? makeSelectorOptions(JSON.parse(xhr.responseText), selector)
       : console.log(xhr.statusText)
     }
     xhr.onerror = () => console.log('error')
