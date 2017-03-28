@@ -12,6 +12,15 @@ const myMap = L.map('mapid', {
   scrollWheelZoom: false
 })
 
+L.Mapzen.apiKey = 'PUT KEY HERE'
+
+var geocoder = L.Mapzen.geocoder({
+  position: 'topright'
+})
+geocoder.addTo(myMap)
+
+/*
+
 const placeInput = document.getElementById('place_input')
 const placeButton = document.getElementById('place_button')
 const placeSelect = document.getElementById('place_select')
@@ -29,37 +38,29 @@ const nominatim = 'http://nominatim.openstreetmap.org/search/'
 // will probably do that with the Turfjs libary.
 ////////////////////////////////////////////////////////////
 
+// make geojson
+// the nomitim seems to bring in almost geojson. the geojson
+// is missing a few parts, so it cannot be added to the map
+// in it's delivered form.
+
 // make selector buttons
-const makeSelectorButtons = (array, color, container) => {
-  array.forEach(n => {
+const makeSelectorButtons = (array, container) => {
+  container.innerHTML = ''
+  array.forEach(p => {
     const btn = document.createElement('button')
-    const value = document.createTextNode(n['display_name'])
+    const text = document.createTextNode(p['display_name'])
 
-    btn.value = text
+    console.log(p['geojson']['type'])
+    //L.GeoJSON(p['geojson']).addTo(myMap)
 
-    btn.style.color = color
+    btn.style.fontWeight = 'bold'
+
+    btn.appendChild(text)
+    container.appendChild(btn)
+
+    return btn
   })
 }
-
-// make function for adding buttons
-const addButton = (text, color, container) => {
-  const btn = document.createElement('button')
-  const value = document.createTextNode(text)
-  //btn.setAttribute('value', text)
-  btn.value=text
-
-  // make the color of the number correspond
-  // to the color of the dataset on the map
-  btn.style.color = color
-  btn.style.fontWeight = 'bold'
-
-  // add text to button and button to div
-  btn.appendChild(value)
-  container.appendChild(btn)
-
-  return btn
-}
-
 
 
 const dataToDiv = (data, div) => {
@@ -72,17 +73,16 @@ const getPlace = url => {
     xhr.open('GET', url, true)
     xhr.onload = () => {
       xhr.readyState === 4 && xhr.status === 200
-//      ? dataToDiv(JSON.parse(xhr.responseText), placeSelect)
-      ? makeSelectorButtons(JSON.parse(xhr.responseText))
+      ? makeSelectorButtons(JSON.parse(xhr.responseText), placeSelect)
       : console.log(xhr.statusText)
     }
-    xhr.onerror = () => console.log('error')
+console.log('error')
     xhr.send()
   })
 } 
 
 placeButton.addEventListener('click', () => {
-  console.log(placeInput.value)
-  const searchString = `${nominatim}${placeInput.value}?format=json`
+  const searchString = `${nominatim}${placeInput.value}?format=json&polygon_geojson=1`
   getPlace(searchString)
 })
+*/
