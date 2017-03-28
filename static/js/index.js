@@ -40,7 +40,8 @@ const normalize_geojson = obj => {
 
 // make selector options
 const makeSelectorOptions = (array, selector) => {
-  selector.innerHtml = ''
+  // clear selector options
+  selector.innerHTML = ''
   array.forEach(p => {
     // get the osm data
     const display_name = p['display_name']
@@ -49,9 +50,9 @@ const makeSelectorOptions = (array, selector) => {
     const option = document.createElement('option')
     option.value = display_name
     const text = document.createTextNode(display_name)
-    const json = normalize_geojson(geojson)
+    const lyr = L.geoJSON(normalize_geojson(geojson))
 
-    possiblePlaces[display_name] = json
+    possiblePlaces[display_name] = lyr
     option.appendChild(text)
     selector.appendChild(option)
   })
@@ -77,9 +78,14 @@ placeButton.addEventListener('click', () => {
 })
 
 // tightly coupled with the selector options thing
+// i can't just keep geojson in the possiblePlaces object, it must be layers, that way
+// i can use the 'map.hasLayer()' function
 selectButton.addEventListener('click', () => {
-  const obj = possiblePlaces[selector.value]
-  const lyr = L.geoJSON(obj).addTo(myMap)
+  Object.keys(possiblePlaces).forEach(n => {
+    myMap.removeLayer(possiblePlaces[n])
+  })
+
+  const lyr = possiblePlaces[selector.value]
+  lyr.addTo(myMap)
   myMap.fitBounds(lyr.getBounds()) 
 })
-
