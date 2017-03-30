@@ -1,0 +1,43 @@
+{
+  "name": "easy-nominatim",
+  "version": "1.0.0",
+  "description": "helper functions for open street maps nominatim",
+  "main": "build/easy-nominatim.js",
+  "scripts": {
+    "dev": "watch 'npm run build' src",
+    "build": "babel src -d build",
+    "test": "mocha --compilers js:babel-register",
+    "test:watch": "npm test -- --watch"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patcurry/easy-nominatim.git"
+  },
+  "keywords": [
+    "osm",
+    "open",
+    "street",
+    "maps",
+    "nominatim"
+  ],
+  "author": "Pat Curry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patcurry/easy-nominatim/issues"
+  },
+  "homepage": "https://github.com/patcurry/easy-nominatim#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-env": "^1.2.2",
+    "babel-register": "^6.24.0",
+    "chai": "^3.5.0",
+    "leaflet": "^1.0.3",
+    "mocha": "^3.2.0",
+    "watch": "^1.0.2"
+  }
+}
