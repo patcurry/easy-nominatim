@@ -22,7 +22,7 @@ const nominatim = 'http://nominatim.openstreetmap.org/search/'
 
 // make geojson
 // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
-const normalize_geojson = obj => {
+const normalizeGeojson = obj => {
     // normalize places the geometry into a featurecollection, similar to
     // https://github.com/mapbox/geojson-normalize
     const geojson = {
@@ -50,7 +50,7 @@ const makeSelectorOptions = (array, selector) => {
     const option = document.createElement('option')
     option.value = display_name
     const text = document.createTextNode(display_name)
-    const lyr = L.geoJSON(normalize_geojson(geojson))
+    const lyr = L.geoJSON(normalizeGeojson(geojson))
 
     possiblePlaces[display_name] = lyr
     option.appendChild(text)
