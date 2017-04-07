@@ -2,7 +2,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 // nominatim string
 var nominatim = 'http://nominatim.openstreetmap.org/search/';
@@ -12,19 +12,36 @@ var nominatim = 'http://nominatim.openstreetmap.org/search/';
 // normalize places the geometry into a featurecollection, similar to
 // https://github.com/mapbox/geojson-normalize
 var normalizeGeojson = function normalizeGeojson(obj) {
-    return {
-        type: "FeatureCollection",
-        features: [{
-            type: "Feature",
-            geometry: obj,
-            properties: {}
-        }]
-    };
+  return {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      geometry: obj,
+      properties: {}
+    }]
+  };
 };
 
 // make a couple buttons and an input in the 'enom' div
 
+var appendToDiv = function appendToDiv(text, div) {
+  // append text to text node
+  var t = document.createTextNode(text);
+
+  // append child to div
+  div.appendChild(t);
+};
+
+var makeButtonsAndInput = function makeButtonsAndInput(divId) {
+  // get div to put things in
+  var div = document.getElementById(divId);
+  var i = document.createElement('input');
+  i.type = 'text';
+  div.appendChild(i);
+};
+
 // this export thing breaks the browser support (which is what i want)
 exports.normalizeGeojson = normalizeGeojson;
 exports.nominatim = nominatim;
+exports.makeButtonsAndInput = makeButtonsAndInput;
 },{}]},{},[1]);
