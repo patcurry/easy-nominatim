@@ -1,30 +1,14 @@
 /////////////////////////////////////////////////////////////
 /*
-Everything must be called with the 'en' prefix. Use the main
-(currently only) function like this:
+Everything must be called with the 'en' prefix. For example:
 
-  en.makeButtonsAndInput(divid)
-
-where the 'divid' is the id of the div you want the buttons and
-input to be in and the 'map' is the leaflet maps variable.
-
-
-I'm redoing this. It's only function is going to be connecting
-to open street maps, getting the geojson data, and returning
-it as an array of geojson objects.
-
-This will be the way the function is called:
-
-  en.getPlaceData(place)
-
-where place is a string that open street map's nominatim api can look up
+  en.getPlaceData('berlin')
+  en.possiblePlaces
 
 */
 /////////////////////////////////////////////////////////////
 
-
 const en = (() => {
-
   // private functions and variables
 
   // nominatim string - do these need to be part of the module?
@@ -71,12 +55,7 @@ const en = (() => {
   // public functions (in module)
   const module = {
 
-    // object to hold places
-    possiblePlaces: possiblePlaces,
-
     getPlaceData: place => {
-      console.log(place)
-      
       getPlaceData(place)
       .then(data => {
         // convert osm data to json object
@@ -84,7 +63,7 @@ const en = (() => {
 
         // clear possible places array
         possiblePlaces.length > 0
-        ? possiblePlaces.forEach(p => possiblePlaces.pop())
+        ? possiblePlaces.length = 0
         : console.log('first additions')
 
         // loop through placeArr and create an object for each
@@ -93,22 +72,23 @@ const en = (() => {
         // by calling 'en.possiblePlaces'
         placeArr.forEach(place => {
           const obj = {}
-          const displayName = place['display_name']
-          const geojson = place['geojson']
-          obj[displayName] = geojson
+          obj.displayName = place['display_name']
+          obj.geojson = place['geojson']
           possiblePlaces.push(obj)
         })
       })
       .catch(error => console.log(error))
-    }
+    },
+
+    // array to hold places
+    possiblePlaces: possiblePlaces
+
   }
 
   return module
   
 // close and call
 })()
-
-
 
 // if this is here, I shouldn't need browserify.
 if (typeof exports !== 'undefined') {
