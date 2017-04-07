@@ -1,8 +1,28 @@
-const assert = require('chai').assert
-const jsdom = require('jsdom')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 
-import {normalizeGeojson, nominatim} from '../src/easy-nominatim.js'
+chai.use(chaiAsPromised)
 
+const assert = chai.assert
+
+const en = require('../src/easy-nominatim.js').en
+
+
+describe('Test en.getPlaceData', () => {
+
+  it('should have an empty possiblePlaces array', () => {
+    assert.equal(en.possiblePlaces.length, 0)
+  })
+
+  it('should get data for a location and put it into the possiblePlaces array', () => {
+//    return en.getPlaceData('palm desert').should.eventually.have.length(2)
+    return assert.eventually.equal(en.getPlaceData('palm desert'), 2)
+  })
+
+})
+
+
+/*
 describe('normalizeGeojson', () => {
   it('turn a json object from osm nominatim api into a geojson object', () => {
     // osm nominatim gives the json polygon info in this form.    
@@ -59,7 +79,6 @@ describe('enom div', () => {
   })
 })
 
-/*
 describe('test this thing', function () {
 
   // Define global.window and global.document.

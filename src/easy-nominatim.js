@@ -36,7 +36,6 @@ const en = (() => {
 
   // promisified xmlhttprequest bound to makeSelectorOptions function
   const getPlaceData = place => {
-
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
 
     return new Promise((resolve, reject) => {
@@ -54,7 +53,8 @@ const en = (() => {
 
   // public functions (in module)
   const module = {
-
+    // this might make things difficult to test. It calls a function that calls
+    // a promise function... how in the world do i test that? I hate thse things
     getPlaceData: place => {
       getPlaceData(place)
       .then(data => {
@@ -90,7 +90,7 @@ const en = (() => {
 // close and call
 })()
 
-// if this is here, I shouldn't need browserify.
+// this is exporting en to node as en.en
 if (typeof exports !== 'undefined') {
   exports.en = en
 }
