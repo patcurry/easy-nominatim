@@ -69,7 +69,7 @@ var en = function () {
         // by calling 'en.possiblePlaces'
         placeArr.forEach(function (place) {
           var obj = {};
-          obj.displayName = place['display_name'];
+          obj.display_name = place['display_name'];
           obj.geojson = place['geojson'];
           possiblePlaces.push(obj);
         });

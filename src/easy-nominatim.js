@@ -72,7 +72,7 @@ const en = (() => {
         // by calling 'en.possiblePlaces'
         placeArr.forEach(place => {
           const obj = {}
-          obj.displayName = place['display_name']
+          obj.display_name = place['display_name']
           obj.geojson = place['geojson']
           possiblePlaces.push(obj)
         })
