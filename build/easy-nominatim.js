@@ -35,6 +35,7 @@ var en = function () {
   };
 
   // promisified xmlhttprequest bound to makeSelectorOptions function
+  // can I put this in the module instead of here?
   var _getPlaceData = function _getPlaceData(place) {
     var searchString = "" + nominatim + place + "?format=json&polygon_geojson=1";
 
@@ -56,7 +57,12 @@ var en = function () {
     // this might make things difficult to test. It calls a function that calls
     // a promise function... how in the world do i test that? I hate thse things
     getPlaceData: function getPlaceData(place) {
-      _getPlaceData(place).then(function (data) {
+
+      _getPlaceData(place)
+
+      // can i put the rest of this stuff in a separate call?
+
+      .then(function (data) {
         // convert osm data to json object
         var placeArr = JSON.parse(data);
 

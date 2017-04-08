@@ -35,6 +35,7 @@ const en = (() => {
   }
 
   // promisified xmlhttprequest bound to makeSelectorOptions function
+  // can I put this in the module instead of here?
   const getPlaceData = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
 
@@ -56,7 +57,11 @@ const en = (() => {
     // this might make things difficult to test. It calls a function that calls
     // a promise function... how in the world do i test that? I hate thse things
     getPlaceData: place => {
+
       getPlaceData(place)
+
+       // can i put the rest of this stuff in a separate call?
+
       .then(data => {
         // convert osm data to json object
         const placeArr = JSON.parse(data)
@@ -94,4 +99,3 @@ const en = (() => {
 if (typeof exports !== 'undefined') {
   exports.en = en
 }
-
