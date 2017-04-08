@@ -6,21 +6,32 @@ Everything must be called with the 'en' prefix. For example:
   en.possiblePlaces
 
 */
+/*
+While I want to use the revealing module pattern of coding,
+I also want to be able to test my code. I will be unable
+to test private functions (unless I jump through a bunch
+of hoops), so I can just make all the functions public. Why
+worry if the nominatim variable is private of public? Even so
+it could still be difficult to test the promises. How do I do
+that?
+*/
 /////////////////////////////////////////////////////////////
 
 const en = (() => {
   // private functions and variables
 
   // nominatim string - do these need to be part of the module?
-  const nominatim = 'http://nominatim.openstreetmap.org/search/'
+//  const nominatim = 'http://nominatim.openstreetmap.org/search/'
 
-  // object to hold possible places in
+  // object to hold possible places in. I'm not making this public yet
+  // there needs to be an empty container to add data to
   const possiblePlaces = []
 
   // make geojson
   // normalize places the geometry into a featurecollection, similar to
   // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
   // https://github.com/mapbox/geojson-normalize
+  /*
   const normalizeGeoJSON = obj => {
   return {
              type: "FeatureCollection",
@@ -33,7 +44,9 @@ const en = (() => {
              ]
         }
   }
+  */
 
+  /*
   // promisified xmlhttprequest bound to makeSelectorOptions function
   // can I put this in the module instead of here?
   const getPlaceData = place => {
@@ -51,14 +64,48 @@ const en = (() => {
       xhr.send()
     })
   } 
+  */
 
   // public functions (in module)
   const module = {
+
+    nominatimSearchUrl: 'http://nominatim.openstreetmap.org/search/',
+
+    normalizeGeoJson: obj => {
+      return {
+        type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              geometry: obj,
+              properties: {}
+            }
+          ]
+        }
+    },
+
+    getPlaceDataPromise: place => {
+      const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', searchString, true)
+        xhr.onload = () => {
+          xhr.status >= 200 < 300
+          ? resolve(xhr.responseText)
+          : reject(xhr.statusText)
+        }
+        xhr.onerror = () => reject(xhr.statusText)
+        xhr.send()
+      })
+    },
+
+    // call the .then and .catch statements parts
     // this might make things difficult to test. It calls a function that calls
-    // a promise function... how in the world do i test that? I hate thse things
+    // a promise function... how in the world do i test that? I hate these things
     getPlaceData: place => {
 
-      getPlaceData(place)
+      getPlaceDataPromise(place)
 
        // can i put the rest of this stuff in a separate call?
 
