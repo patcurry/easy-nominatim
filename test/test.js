@@ -7,18 +7,14 @@ const assert = chai.assert
 
 const en = require('../src/easy-nominatim.js').en
 
-
 describe('en.possiblePlaces', () => {
-
   it('should have an empty possiblePlaces array', () => {
     assert.equal(en.possiblePlaces.length, 0)
   })
-
-  it('should get data for a location and put it into the possiblePlaces array', () => {
+//  it('should get data for a location and put it into the possiblePlaces array', () => {
 //    return en.getPlaceData('palm desert').should.eventually.have.length(2)
-    return assert.eventually.equal(en.getPlaceData('palm desert'), 2)
-  })
-
+//    return assert.eventually.equal(en.getPlaceData('palm desert'), 2)
+//  })
 })
 
 describe('en.nominatimSearchUrl', () => {
@@ -53,3 +49,15 @@ describe('en.normalizeGeoJson', () => {
     )
   })
 })
+
+//en.getPlaceDataPromise
+
+describe('en.getPlaceDataPromise', () => {
+  it('should eventually return object data', () => {
+    //nominatim = 'http://nominatim.openstreetmap.org/search/'
+    const place = 'palm desert'
+
+    return assert.eventually.equal(en.getPlaceDataPromise(place).length, 2)
+  })
+})
+

@@ -21,7 +21,7 @@ const en = (() => {
   // private functions and variables
 
   // nominatim string - do these need to be part of the module?
-//  const nominatim = 'http://nominatim.openstreetmap.org/search/'
+  //const nominatim = 'http://nominatim.openstreetmap.org/search/'
 
   // object to hold possible places in. I'm not making this public yet
   // there needs to be an empty container to add data to
@@ -85,7 +85,7 @@ const en = (() => {
     },
 
     getPlaceDataPromise: place => {
-      const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
+      const searchString = `${module.nominatim}${place}?format=json&polygon_geojson=1`
 
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest()
