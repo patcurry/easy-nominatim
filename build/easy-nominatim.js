@@ -4,7 +4,11 @@
 /*
 Everything must be called with the 'en' prefix. For example:
 
-  en.getPlaceData('berlin')
+  en.getPlaceData('berlin', callback)
+
+where the callback is a function that takes the possiblePlaces
+array (which is an array of objects)
+
   en.possiblePlaces
 
 */
@@ -21,98 +25,60 @@ that?
 */
 /////////////////////////////////////////////////////////////
 
-// I don't like the module style right now. It's making my life difficult
-
 var en = function () {
+  /////////////////////////////////////////////////////////////
   // private functions and variables
+  /////////////////////////////////////////////////////////////
 
   // nominatim string - do these need to be part of the module?
-  //const nominatim = 'http://nominatim.openstreetmap.org/search/'
+  var nominatim = 'http://nominatim.openstreetmap.org/search/';
 
-  // object to hold possible places in. I'm not making this public yet
-  // there needs to be an empty container to add data to
+  // object to hold possible places in.
   var possiblePlaces = [];
 
-  // make geojson
   // normalize places the geometry into a featurecollection, similar to
   // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
   // https://github.com/mapbox/geojson-normalize
-  /*
-  const normalizeGeoJSON = obj => {
-  return {
-             type: "FeatureCollection",
-             features: [
-                 {
-                     type: "Feature",
-                     geometry: obj,
-                     properties: {}
-                 }
-             ]
-        }
-  }
-  */
 
-  /*
-  // promisified xmlhttprequest bound to makeSelectorOptions function
-  // can I put this in the module instead of here?
-  const getPlaceData = place => {
-    const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
-     return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest()
-      xhr.open('GET', searchString, true)
-      xhr.onload = () => {
-        xhr.status >= 200 < 300
-        ? resolve(xhr.responseText)
-        : reject(xhr.statusText)
-      }
-      xhr.onerror = () => reject(xhr.statusText)
-      xhr.send()
-    })
-  } 
-  */
+  var normalizeGeoJSON = function normalizeGeoJSON(obj) {
+    return {
+      type: "FeatureCollection",
+      features: [{
+        type: "Feature",
+        geometry: obj,
+        properties: {}
+      }]
+    };
+  };
 
-  // public functions (in module)
-  var module = {
+  // promisified xmlhttprequest with nominatim addition for url
+  var _getPlaceData = function _getPlaceData(place) {
+    var searchString = "" + nominatim + place + "?format=json&polygon_geojson=1";
 
-    nominatimSearchUrl: 'http://nominatim.openstreetmap.org/search/',
-
-    normalizeGeoJson: function normalizeGeoJson(obj) {
-      return {
-        type: "FeatureCollection",
-        features: [{
-          type: "Feature",
-          geometry: obj,
-          properties: {}
-        }]
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', searchString, true); // does this need to be asynchronous?
+      xhr.onload = function () {
+        xhr.status >= 200 < 300 ? resolve(xhr.responseText) : reject(xhr.statusText);
       };
-    },
+      xhr.onerror = function () {
+        return reject(xhr.statusText);
+      };
+      xhr.send();
+    });
+  };
 
-    getPlaceDataPromise: function getPlaceDataPromise(place) {
-      var searchString = "" + module.nominatim + place + "?format=json&polygon_geojson=1";
+  /////////////////////////////////////////////////////////////
+  // public functions and variables
+  /////////////////////////////////////////////////////////////
 
-      return new Promise(function (resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', searchString, true);
-        xhr.onload = function () {
-          xhr.status >= 200 < 300 ? resolve(xhr.responseText) : reject(xhr.statusText);
-        };
-        xhr.onerror = function () {
-          return reject(xhr.statusText);
-        };
-        xhr.send();
-      });
-    },
-
+  var module = {
     // call the .then and .catch statements parts
     // this might make things difficult to test. It calls a function that calls
-    // a promise function... how in the world do i test that? I hate these things
-    getPlaceData: function getPlaceData(place) {
-
-      getPlaceDataPromise(place)
-
-      // can i put the rest of this stuff in a separate call?
-
-      .then(function (data) {
+    // a promise function... how in the world do i test that? I hate thse things
+    // I need to pass in another function to be called
+    getPlaceData: function getPlaceData(place, callback) {
+      _getPlaceData(place).then(function (data) {
         // convert osm data to json object
         var placeArr = JSON.parse(data);
 
@@ -129,6 +95,10 @@ var en = function () {
           obj.geojson = place['geojson'];
           possiblePlaces.push(obj);
         });
+
+        // now take the possible places and use the callback
+        // to do something with it
+        callback(possiblePlaces);
       }).catch(function (error) {
         return console.log(error);
       });
