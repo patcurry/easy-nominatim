@@ -5,9 +5,16 @@ Everything must be called with the 'en' prefix. For example:
   en.getPlaceData('berlin', callback)
 
 where the callback is a function that takes the possiblePlaces
-array (which is an array of objects)
+array (which is an array of objects). All the functions below
+are available to users. This is so that they could be tested
+from the command line with mocha (and also used with node).
+Call them with the 'en' prefix.
 
+  en.nominatim
   en.possiblePlaces
+  en.normalizeGeoJSON
+  en.getPlaceDataPromise
+  en.getPlaceData
 
 */
 /*
