@@ -40,10 +40,10 @@ const en = (() => {
   
   const normalizeGeoJSON = obj => {
     return {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features: [
         {
-          type: "Feature",
+          type: 'Feature',
           geometry: obj,
           properties: {}
         }
@@ -85,18 +85,15 @@ const en = (() => {
         const placeArr = JSON.parse(data)
 
         // clear possible places array
-        possiblePlaces.length > 0
-        ? possiblePlaces.length = 0
-        : console.log('first additions')
+        if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
 
         // loop through placeArr and create an object for each
         // of the array items. Add those objects to the
-        // possible places array, so that they can be accessed
-        // by calling 'en.possiblePlaces'
+        // possible places array.
         placeArr.forEach(place => {
           const obj = {}
           obj.display_name = place['display_name']
-          obj.geojson = place['geojson']
+          obj.geojson = normalizeGeoJSON(place['geojson'])
           possiblePlaces.push(obj)
         })
 
@@ -104,12 +101,13 @@ const en = (() => {
         // to do something with it
         callback(possiblePlaces)
       })
-      .catch(error => console.log(error))
+      .catch(error => Error(error))
     },
 
     // array to hold places
-    possiblePlaces: possiblePlaces
-
+    // should this be here? It's kind of hard to use actually
+    // i'm taking it out. This thing will only have the functions that work
+    // possiblePlaces: possiblePlaces
   }
 
   return module

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /////////////////////////////////////////////////////////////
 /*
@@ -42,9 +42,9 @@ var en = function () {
 
   var normalizeGeoJSON = function normalizeGeoJSON(obj) {
     return {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features: [{
-        type: "Feature",
+        type: 'Feature',
         geometry: obj,
         properties: {}
       }]
@@ -53,7 +53,7 @@ var en = function () {
 
   // promisified xmlhttprequest with nominatim addition for url
   var _getPlaceData = function _getPlaceData(place) {
-    var searchString = "" + nominatim + place + "?format=json&polygon_geojson=1";
+    var searchString = '' + nominatim + place + '?format=json&polygon_geojson=1';
 
     return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
@@ -83,16 +83,17 @@ var en = function () {
         var placeArr = JSON.parse(data);
 
         // clear possible places array
-        possiblePlaces.length > 0 ? possiblePlaces.length = 0 : console.log('first additions');
+        if (possiblePlaces.length > 0) {
+          possiblePlaces.length = 0;
+        }
 
         // loop through placeArr and create an object for each
         // of the array items. Add those objects to the
-        // possible places array, so that they can be accessed
-        // by calling 'en.possiblePlaces'
+        // possible places array.
         placeArr.forEach(function (place) {
           var obj = {};
           obj.display_name = place['display_name'];
-          obj.geojson = place['geojson'];
+          obj.geojson = normalizeGeoJSON(place['geojson']);
           possiblePlaces.push(obj);
         });
 
@@ -100,15 +101,16 @@ var en = function () {
         // to do something with it
         callback(possiblePlaces);
       }).catch(function (error) {
-        return console.log(error);
+        return Error(error);
       });
-    },
-
-    // array to hold places
-    possiblePlaces: possiblePlaces
+    }
 
   };
 
+  // array to hold places
+  // should this be here? It's kind of hard to use actually
+  // i'm taking it out. This thing will only have the functions that work
+  // possiblePlaces: possiblePlaces
   return module;
 
   // close and call
