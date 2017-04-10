@@ -47,9 +47,29 @@ describe('en.normalizeGeoJSON', () => {
 
 describe('en.getPlaceDataPromise', () => {
   it('should eventually return object data', () => {
-    //nominatim = 'http://nominatim.openstreetmap.org/search/'
+
+  const nominatim = 'http://nominatim.openstreetmap.org/search/'
+  const getPlaceDataPromise_test = place => {
+    const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('GET', searchString, true) // does this need to be asynchronous?
+      xhr.onload = () => {
+        xhr.status >= 200 < 300
+        ? resolve(xhr.responseText)
+        : reject(xhr.statusText)
+      }
+      xhr.onerror = () => reject(xhr.statusText)
+      xhr.send()
+    })
+  }
+
+
+
     const place = 'palm desert'
-    return assert.eventually.equal(en.getPlaceDataPromise(place).length, 2)
+    console.log(getPlaceDataPromise_test('palm desert')) // why is this undefined?
+
+    return assert.eventually.equal(getPlaceDataPromise_test(place).length, 2)
   })
 })
 
