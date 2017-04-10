@@ -2,7 +2,11 @@
 /*
 Everything must be called with the 'en' prefix. For example:
 
-  en.getPlaceData('berlin')
+  en.getPlaceData('berlin', callback)
+
+where the callback is a function that takes the possiblePlaces
+array (which is an array of objects)
+
   en.possiblePlaces
 
 */
@@ -56,7 +60,8 @@ const en = (() => {
   const module = {
     // this might make things difficult to test. It calls a function that calls
     // a promise function... how in the world do i test that? I hate thse things
-    getPlaceData: place => {
+    // I need to pass in another function to be called
+    getPlaceData: (place, callback) => {
 
       getPlaceData(place)
 
@@ -81,6 +86,10 @@ const en = (() => {
           obj.geojson = place['geojson']
           possiblePlaces.push(obj)
         })
+
+        // now take the possible places and use the callback
+        // to do something with it
+        callback(possiblePlaces)
       })
       .catch(error => console.log(error))
     },
