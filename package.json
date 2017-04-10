@@ -1,6 +1,6 @@
 {
   "name": "easy-nominatim",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "helper functions for open street maps nominatim",
   "main": "build/easy-nominatim.js",
   "scripts": {
