@@ -24,9 +24,6 @@ that?
 /////////////////////////////////////////////////////////////
 
 const en = (() => {
-/////////////////////////////////////////////////////////////
-// private functions and variables
-/////////////////////////////////////////////////////////////
 
   // nominatim string - do these need to be part of the module?
   const nominatim = 'http://nominatim.openstreetmap.org/search/'
@@ -37,7 +34,6 @@ const en = (() => {
   // normalize places the geometry into a featurecollection, similar to
   // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
   // https://github.com/mapbox/geojson-normalize
-  
   const normalizeGeoJSON = obj => {
     return {
       type: 'FeatureCollection',
@@ -52,7 +48,7 @@ const en = (() => {
   }
   
   // promisified xmlhttprequest with nominatim addition for url
-  const getPlaceData = place => {
+  const getPlaceDataPromise = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
 
     return new Promise((resolve, reject) => {
@@ -68,17 +64,12 @@ const en = (() => {
     })
   } 
 
-/////////////////////////////////////////////////////////////
-// public functions and variables
-/////////////////////////////////////////////////////////////
-
-  const module = {
-    // call the .then and .catch statements parts
-    // this might make things difficult to test. It calls a function that calls
-    // a promise function... how in the world do i test that? I hate thse things
-    // I need to pass in another function to be called
-    getPlaceData: (place, callback) => {
-      getPlaceData(place)
+  // call the .then and .catch statements parts
+  // this might make things difficult to test. It calls a function that calls
+  // a promise function... how in the world do i test that? I hate thse things
+  // I need to pass in another function to be called
+  const  getPlaceData = (place, callback) => {
+      getPlaceDataPromise(place)
 
       .then(data => {
         // convert osm data to json object
@@ -102,12 +93,15 @@ const en = (() => {
         callback(possiblePlaces)
       })
       .catch(error => Error(error))
-    },
+    }
 
-    // array to hold places
-    // should this be here? It's kind of hard to use actually
-    // i'm taking it out. This thing will only have the functions that work
-    // possiblePlaces: possiblePlaces
+  // just make everything public like this
+  const module = {
+    nominatim: nominatim,
+    possiblePlaces: possiblePlaces,
+    normalizeGeoJSON: normalizeGeoJSON,
+    getPlaceDataPromise: getPlaceData,
+    getPlaceData: getPlaceData
   }
 
   return module

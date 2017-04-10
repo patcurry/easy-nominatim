@@ -26,9 +26,6 @@ that?
 /////////////////////////////////////////////////////////////
 
 var en = function () {
-  /////////////////////////////////////////////////////////////
-  // private functions and variables
-  /////////////////////////////////////////////////////////////
 
   // nominatim string - do these need to be part of the module?
   var nominatim = 'http://nominatim.openstreetmap.org/search/';
@@ -39,7 +36,6 @@ var en = function () {
   // normalize places the geometry into a featurecollection, similar to
   // this is lifted from http://nominatim.openstreetmap.org/js/nominatim-ui.js
   // https://github.com/mapbox/geojson-normalize
-
   var normalizeGeoJSON = function normalizeGeoJSON(obj) {
     return {
       type: 'FeatureCollection',
@@ -52,7 +48,7 @@ var en = function () {
   };
 
   // promisified xmlhttprequest with nominatim addition for url
-  var _getPlaceData = function _getPlaceData(place) {
+  var getPlaceDataPromise = function getPlaceDataPromise(place) {
     var searchString = '' + nominatim + place + '?format=json&polygon_geojson=1';
 
     return new Promise(function (resolve, reject) {
@@ -68,49 +64,47 @@ var en = function () {
     });
   };
 
-  /////////////////////////////////////////////////////////////
-  // public functions and variables
-  /////////////////////////////////////////////////////////////
+  // call the .then and .catch statements parts
+  // this might make things difficult to test. It calls a function that calls
+  // a promise function... how in the world do i test that? I hate thse things
+  // I need to pass in another function to be called
+  var getPlaceData = function getPlaceData(place, callback) {
+    getPlaceDataPromise(place).then(function (data) {
+      // convert osm data to json object
+      var placeArr = JSON.parse(data);
 
-  var module = {
-    // call the .then and .catch statements parts
-    // this might make things difficult to test. It calls a function that calls
-    // a promise function... how in the world do i test that? I hate thse things
-    // I need to pass in another function to be called
-    getPlaceData: function getPlaceData(place, callback) {
-      _getPlaceData(place).then(function (data) {
-        // convert osm data to json object
-        var placeArr = JSON.parse(data);
+      // clear possible places array
+      if (possiblePlaces.length > 0) {
+        possiblePlaces.length = 0;
+      }
 
-        // clear possible places array
-        if (possiblePlaces.length > 0) {
-          possiblePlaces.length = 0;
-        }
-
-        // loop through placeArr and create an object for each
-        // of the array items. Add those objects to the
-        // possible places array.
-        placeArr.forEach(function (place) {
-          var obj = {};
-          obj.display_name = place['display_name'];
-          obj.geojson = normalizeGeoJSON(place['geojson']);
-          possiblePlaces.push(obj);
-        });
-
-        // now take the possible places and use the callback
-        // to do something with it
-        callback(possiblePlaces);
-      }).catch(function (error) {
-        return Error(error);
+      // loop through placeArr and create an object for each
+      // of the array items. Add those objects to the
+      // possible places array.
+      placeArr.forEach(function (place) {
+        var obj = {};
+        obj.display_name = place['display_name'];
+        obj.geojson = normalizeGeoJSON(place['geojson']);
+        possiblePlaces.push(obj);
       });
-    }
 
+      // now take the possible places and use the callback
+      // to do something with it
+      callback(possiblePlaces);
+    }).catch(function (error) {
+      return Error(error);
+    });
   };
 
-  // array to hold places
-  // should this be here? It's kind of hard to use actually
-  // i'm taking it out. This thing will only have the functions that work
-  // possiblePlaces: possiblePlaces
+  // just make everything public like this
+  var module = {
+    nominatim: nominatim,
+    possiblePlaces: possiblePlaces,
+    normalizeGeoJSON: normalizeGeoJSON,
+    getPlaceDataPromise: getPlaceData,
+    getPlaceData: getPlaceData
+  };
+
   return module;
 
   // close and call
