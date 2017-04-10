@@ -7,6 +7,7 @@ Everything must be called with the 'en' prefix. For example:
 
 */
 /*
+
 While I want to use the revealing module pattern of coding,
 I also want to be able to test my code. I will be unable
 to test private functions (unless I jump through a bunch
@@ -14,8 +15,11 @@ of hoops), so I can just make all the functions public. Why
 worry if the nominatim variable is private of public? Even so
 it could still be difficult to test the promises. How do I do
 that?
+
 */
 /////////////////////////////////////////////////////////////
+
+// I don't like the module style right now. It's making my life difficult
 
 const en = (() => {
   // private functions and variables
