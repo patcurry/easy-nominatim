@@ -57,7 +57,6 @@ var en = function () {
   // promisified xmlhttprequest with nominatim addition for url
   var getPlaceDataPromise = function getPlaceDataPromise(place) {
     var searchString = '' + nominatim + place + '?format=json&polygon_geojson=1';
-
     return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', searchString, true); // does this need to be asynchronous?
@@ -71,10 +70,7 @@ var en = function () {
     });
   };
 
-  // call the .then and .catch statements parts
-  // this might make things difficult to test. It calls a function that calls
-  // a promise function... how in the world do i test that? I hate thse things
-  // I need to pass in another function to be called
+  // call the promise and deal with the data using .then and .catch functions
   var getPlaceData = function getPlaceData(place, callback) {
     getPlaceDataPromise(place).then(function (data) {
       // convert osm data to json object
@@ -86,8 +82,8 @@ var en = function () {
       }
 
       // loop through placeArr and create an object for each
-      // of the array items. Add those objects to the
-      // possible places array.
+      // of the array items, then add those objects to the
+      // possible places array
       placeArr.forEach(function (place) {
         var obj = {};
         obj.display_name = place['display_name'];
@@ -95,7 +91,7 @@ var en = function () {
         possiblePlaces.push(obj);
       });
 
-      // now take the possible places and use the callback
+      // take the possible places and use the callback
       // to do something with it
       callback(possiblePlaces);
     }).catch(function (error) {
@@ -103,7 +99,7 @@ var en = function () {
     });
   };
 
-  // just make everything public like this
+  // make everything public
   var module = {
     nominatim: nominatim,
     possiblePlaces: possiblePlaces,
@@ -113,8 +109,6 @@ var en = function () {
   };
 
   return module;
-
-  // close and call
 }();
 
 // this is exporting en to node as en.en

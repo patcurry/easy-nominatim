@@ -57,7 +57,6 @@ const en = (() => {
   // promisified xmlhttprequest with nominatim addition for url
   const getPlaceDataPromise = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
-
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
       xhr.open('GET', searchString, true) // does this need to be asynchronous?
@@ -71,38 +70,34 @@ const en = (() => {
     })
   } 
 
-  // call the .then and .catch statements parts
-  // this might make things difficult to test. It calls a function that calls
-  // a promise function... how in the world do i test that? I hate thse things
-  // I need to pass in another function to be called
+  // call the promise and deal with the data using .then and .catch functions
   const  getPlaceData = (place, callback) => {
-      getPlaceDataPromise(place)
+    getPlaceDataPromise(place)
+    .then(data => {
+      // convert osm data to json object
+      const placeArr = JSON.parse(data)
 
-      .then(data => {
-        // convert osm data to json object
-        const placeArr = JSON.parse(data)
+      // clear possible places array
+      if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
 
-        // clear possible places array
-        if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
-
-        // loop through placeArr and create an object for each
-        // of the array items. Add those objects to the
-        // possible places array.
-        placeArr.forEach(place => {
-          const obj = {}
-          obj.display_name = place['display_name']
-          obj.geojson = normalizeGeoJSON(place['geojson'])
-          possiblePlaces.push(obj)
-        })
-
-        // now take the possible places and use the callback
-        // to do something with it
-        callback(possiblePlaces)
+      // loop through placeArr and create an object for each
+      // of the array items, then add those objects to the
+      // possible places array
+      placeArr.forEach(place => {
+        const obj = {}
+        obj.display_name = place['display_name']
+        obj.geojson = normalizeGeoJSON(place['geojson'])
+        possiblePlaces.push(obj)
       })
-      .catch(error => Error(error))
-    }
 
-  // just make everything public like this
+      // take the possible places and use the callback
+      // to do something with it
+      callback(possiblePlaces)
+    })
+    .catch(error => Error(error))
+  }
+
+  // make everything public
   const module = {
     nominatim: nominatim,
     possiblePlaces: possiblePlaces,
@@ -112,8 +107,6 @@ const en = (() => {
   }
 
   return module
-  
-// close and call
 })()
 
 // this is exporting en to node as en.en
