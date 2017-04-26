@@ -33,7 +33,7 @@ that?
 const en = (() => {
 
   // nominatim string - do these need to be part of the module?
-  const nominatim = 'http://nominatim.openstreetmap.org/search/'
+  const nominatim = 'https://nominatim.openstreetmap.org/search/'
 
   // object to hold possible places in.
   const possiblePlaces = []

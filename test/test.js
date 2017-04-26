@@ -8,7 +8,7 @@ const en = require('../src/easy-nominatim.js').en
 
 describe('en.nominatim', () => {
   it('should return osm nominatim api search url', () => {
-    assert.equal(en.nominatim, 'http://nominatim.openstreetmap.org/search/')
+    assert.equal(en.nominatim, 'https://nominatim.openstreetmap.org/search/')
   })
 })
 
@@ -48,7 +48,7 @@ describe('en.normalizeGeoJSON', () => {
 describe('en.getPlaceDataPromise', () => {
   it('should eventually return object data', () => {
 
-  const nominatim = 'http://nominatim.openstreetmap.org/search/'
+  const nominatim = 'https://nominatim.openstreetmap.org/search/'
   const getPlaceDataPromise_test = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
     return new Promise((resolve, reject) => {

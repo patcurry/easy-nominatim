@@ -35,7 +35,7 @@ that?
 var en = function () {
 
   // nominatim string - do these need to be part of the module?
-  var nominatim = 'http://nominatim.openstreetmap.org/search/';
+  var nominatim = 'https://nominatim.openstreetmap.org/search/';
 
   // object to hold possible places in.
   var possiblePlaces = [];
