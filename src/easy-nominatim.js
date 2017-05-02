@@ -54,6 +54,7 @@ const en = (() => {
     }
   }
   
+/*
   // promisified xmlhttprequest with nominatim addition for url
   const getPlaceDataPromise = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
@@ -69,6 +70,14 @@ const en = (() => {
       xhr.send()
     })
   } 
+*/
+
+  const getPlaceDataPromise = place => {
+    const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
+    fetch(searchString)
+    .then(response => response)
+    .catch(error => console.log('There has been a problem with the fetch operation: ', error)
+  }
 
   // call the promise and deal with the data using .then and .catch functions
   const  getPlaceData = (place, callback) => {
