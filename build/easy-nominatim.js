@@ -54,19 +54,33 @@ var en = function () {
     };
   };
 
-  // promisified xmlhttprequest with nominatim addition for url
+  /*
+    // promisified xmlhttprequest with nominatim addition for url
+    const getPlaceDataPromise = place => {
+      const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', searchString, true) // does this need to be asynchronous?
+        xhr.onload = () => {
+          xhr.status >= 200 < 300
+          ? resolve(xhr.responseText)
+          : reject(xhr.statusText)
+        }
+        xhr.onerror = () => reject(xhr.statusText)
+        xhr.send()
+      })
+    } 
+  */
+
   var getPlaceDataPromise = function getPlaceDataPromise(place) {
     var searchString = '' + nominatim + place + '?format=json&polygon_geojson=1';
-    return new Promise(function (resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', searchString, true); // does this need to be asynchronous?
-      xhr.onload = function () {
-        xhr.status >= 200 < 300 ? resolve(xhr.responseText) : reject(xhr.statusText);
-      };
-      xhr.onerror = function () {
-        return reject(xhr.statusText);
-      };
-      xhr.send();
+    fetch(searchString).then(function (response) {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status code: ', response.status);
+      }
+      return response;
+    }).catch(function (error) {
+      return console.log('There has been a problem with the fetch operation: ', error);
     });
   };
 

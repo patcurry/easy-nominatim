@@ -75,12 +75,19 @@ const en = (() => {
   const getPlaceDataPromise = place => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
     fetch(searchString)
-    .then(response => response)
-    .catch(error => console.log('There has been a problem with the fetch operation: ', error)
+      .then(response => {
+        if (response.status !== 200) {
+          console.log('Looks like there was a problem. Status code: ', response.status)
+        }
+        return response
+      })
+      .catch(
+        error => console.log('There has been a problem with the fetch operation: ', error)
+      )
   }
 
   // call the promise and deal with the data using .then and .catch functions
-  const  getPlaceData = (place, callback) => {
+  const getPlaceData = (place, callback) => {
     getPlaceDataPromise(place)
     .then(data => {
       // convert osm data to json object
