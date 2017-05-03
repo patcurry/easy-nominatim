@@ -8,6 +8,7 @@ if (typeof require !== 'undefined') {
   const en = require('../src/easy-nominatim.js').en
 }
 
+
 describe('en.nominatim', () => {
   it('should return osm nominatim api search url', () => {
     assert.equal(en.nominatim, 'https://nominatim.openstreetmap.org/search/')
