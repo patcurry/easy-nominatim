@@ -13,7 +13,6 @@ Call them with the 'en' prefix.
   en.nominatim
   en.possiblePlaces
   en.normalizeGeoJSON
-  en.getPlaceDataPromise
   en.getPlaceData
 
 */
@@ -53,64 +52,28 @@ const en = (() => {
       ]
     }
   }
-  
-/*
-  // promisified xmlhttprequest with nominatim addition for url
-  const getPlaceDataPromise = place => {
-    const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest()
-      xhr.open('GET', searchString, true) // does this need to be asynchronous?
-      xhr.onload = () => {
-        xhr.status >= 200 < 300
-        ? resolve(xhr.responseText)
-        : reject(xhr.statusText)
-      }
-      xhr.onerror = () => reject(xhr.statusText)
-      xhr.send()
-    })
-  } 
-*/
 
-  const getPlaceDataPromise = place => {
+  const getPlaceData = (place, callback) => {
     const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
-    fetch(searchString)
+    return fetch(searchString)
       .then(response => {
-        if (response.status !== 200) {
+        if (!response.ok) {
           console.log('Looks like there was a problem. Status code: ', response.status)
         }
-        return response
+        return response.json()
       })
-      .catch(
-        error => console.log('There has been a problem with the fetch operation: ', error)
-      )
-  }
+      .then(response => {
+        if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
 
-  // call the promise and deal with the data using .then and .catch functions
-  const getPlaceData = (place, callback) => {
-    getPlaceDataPromise(place)
-    .then(data => {
-      // convert osm data to json object
-      const placeArr = JSON.parse(data)
-
-      // clear possible places array
-      if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
-
-      // loop through placeArr and create an object for each
-      // of the array items, then add those objects to the
-      // possible places array
-      placeArr.forEach(place => {
-        const obj = {}
-        obj.display_name = place['display_name']
-        obj.geojson = normalizeGeoJSON(place['geojson'])
-        possiblePlaces.push(obj)
+        response.forEach(place => {
+          const obj = {}
+          obj.display_name = place['display_name']
+          obj.geojson = normalizeGeoJSON(place['geojson'])
+          possiblePlaces.push(obj)
+        })
       })
-
-      // take the possible places and use the callback
-      // to do something with it
-      callback(possiblePlaces)
-    })
-    .catch(error => Error(error))
+      .then(() => callback(possiblePlaces))
+      .catch(error => console.log('There has been a problem with the fetch operation: ', error))
   }
 
   // make everything public
@@ -118,7 +81,6 @@ const en = (() => {
     nominatim: nominatim,
     possiblePlaces: possiblePlaces,
     normalizeGeoJSON: normalizeGeoJSON,
-    getPlaceDataPromise: getPlaceData,
     getPlaceData: getPlaceData
   }
 
@@ -127,5 +89,5 @@ const en = (() => {
 
 // this is exporting en to node as en.en
 if (typeof exports !== 'undefined') {
-  exports.en = en
+  exports.en
 }
