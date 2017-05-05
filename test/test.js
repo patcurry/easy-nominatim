@@ -1,20 +1,11 @@
-if (typeof require !== 'undefined') {
-  const chai = require('chai')
-  const chaiAsPromised = require('chai-as-promised')
-  chai.use(chaiAsPromised)
-  const assert = chai.assert
-  const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
-
-  const en = require('../src/easy-nominatim.js').en
-}
-
-
 describe('en.nominatim', () => {
   it('should return osm nominatim api search url', () => {
+    console.log(en)
     assert.equal(en.nominatim, 'https://nominatim.openstreetmap.org/search/')
   })
 })
 
+/*
 describe('en.possiblePlaces', () => {
   it('should have an empty possiblePlaces array', () => {
     assert.equal(en.possiblePlaces.length, 0)
@@ -87,3 +78,4 @@ describe('en.getPlaceData', () => {
     assert.equal(0, "this isn't done yet")
   })
 })
+*/

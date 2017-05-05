@@ -4,11 +4,8 @@
   "description": "helper functions for open street maps nominatim",
   "main": "build/easy-nominatim.js",
   "scripts": {
-    "dev": "watch 'npm run build' src",
-    "build": "babel src -d build",
-    "test": "mocha --compilers js:babel-register",
-    "test:watch": "npm test -- --watch",
-    "prepublish": "npm run build"
+    "babel": "babel src/easy-nominatim.js -o easy-nominatim.js",
+    "dev": "watch 'npm run babel' src"
   },
   "repository": {
     "type": "git",
@@ -29,15 +26,10 @@
   },
   "homepage": "https://github.com/patcurry/easy-nominatim#readme",
   "devDependencies": {
-    "babel-cli": "^6.24.0",
-    "babel-preset-env": "^1.2.2",
-    "babel-register": "^6.24.0",
-    "browserify": "^14.3.0",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
+    "babel-cli": "^6.24.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
     "eslint": "^3.19.0",
-    "mocha": "^3.2.0",
-    "watch": "^1.0.2",
-    "xmlhttprequest": "^1.8.0"
+    "watch": "^1.0.2"
   }
 }

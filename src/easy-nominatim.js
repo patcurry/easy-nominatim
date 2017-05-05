@@ -1,5 +1,15 @@
 /////////////////////////////////////////////////////////////
 /*
+This package is currently only available in the browser. I
+realized that for my current purposes, I only need it in
+the browser. However, I will be adding node functionality...
+maybe. It uses babel to transpile everything from ES2015 to
+es5, but it also uses the new javascript fetch api. I probably
+don't need to have babel do anything if I'm sticking with the
+fetch api, because any browser that can handle fetch will be
+able to handle ES2015. So, maybe I'll remove that.
+*/
+/*
 Everything must be called with the 'en' prefix. For example:
 
   en.getPlaceData('berlin', callback)
@@ -25,11 +35,11 @@ of hoops), so I can just make all the functions public. Why
 worry if the nominatim variable is private of public? Even so
 it could still be difficult to test the promises. How do I do
 that?
-
 */
 /////////////////////////////////////////////////////////////
 
 const en = (() => {
+
 
   // nominatim string - do these need to be part of the module?
   const nominatim = 'https://nominatim.openstreetmap.org/search/'
@@ -77,17 +87,12 @@ const en = (() => {
   }
 
   // make everything public
-  const module = {
+  const everything = {
     nominatim: nominatim,
     possiblePlaces: possiblePlaces,
     normalizeGeoJSON: normalizeGeoJSON,
     getPlaceData: getPlaceData
   }
 
-  return module
+  return everything 
 })()
-
-// this is exporting en to node as en.en
-if (typeof exports !== 'undefined') {
-  exports.en
-}

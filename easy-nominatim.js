@@ -2,6 +2,16 @@
 
 /////////////////////////////////////////////////////////////
 /*
+This package is currently only available in the browser. I
+realized that for my current purposes, I only need it in
+the browser. However, I will be adding node functionality...
+maybe. It uses babel to transpile everything from ES2015 to
+es5, but it also uses the new javascript fetch api. I probably
+don't need to have babel do anything if I'm sticking with the
+fetch api, because any browser that can handle fetch will be
+able to handle ES2015. So, maybe I'll remove that.
+*/
+/*
 Everything must be called with the 'en' prefix. For example:
 
   en.getPlaceData('berlin', callback)
@@ -15,7 +25,6 @@ Call them with the 'en' prefix.
   en.nominatim
   en.possiblePlaces
   en.normalizeGeoJSON
-  en.getPlaceDataPromise
   en.getPlaceData
 
 */
@@ -28,7 +37,6 @@ of hoops), so I can just make all the functions public. Why
 worry if the nominatim variable is private of public? Even so
 it could still be difficult to test the promises. How do I do
 that?
-
 */
 /////////////////////////////////////////////////////////////
 
@@ -54,78 +62,38 @@ var en = function () {
     };
   };
 
-  /*
-    // promisified xmlhttprequest with nominatim addition for url
-    const getPlaceDataPromise = place => {
-      const searchString = `${nominatim}${place}?format=json&polygon_geojson=1`
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', searchString, true) // does this need to be asynchronous?
-        xhr.onload = () => {
-          xhr.status >= 200 < 300
-          ? resolve(xhr.responseText)
-          : reject(xhr.statusText)
-        }
-        xhr.onerror = () => reject(xhr.statusText)
-        xhr.send()
-      })
-    } 
-  */
-
-  var getPlaceDataPromise = function getPlaceDataPromise(place) {
+  var getPlaceData = function getPlaceData(place, callback) {
     var searchString = '' + nominatim + place + '?format=json&polygon_geojson=1';
-    fetch(searchString).then(function (response) {
-      if (response.status !== 200) {
+    return fetch(searchString).then(function (response) {
+      if (!response.ok) {
         console.log('Looks like there was a problem. Status code: ', response.status);
       }
-      return response;
-    }).catch(function (error) {
-      return console.log('There has been a problem with the fetch operation: ', error);
-    });
-  };
-
-  // call the promise and deal with the data using .then and .catch functions
-  var getPlaceData = function getPlaceData(place, callback) {
-    getPlaceDataPromise(place).then(function (data) {
-      // convert osm data to json object
-      var placeArr = JSON.parse(data);
-
-      // clear possible places array
+      return response.json();
+    }).then(function (response) {
       if (possiblePlaces.length > 0) {
         possiblePlaces.length = 0;
       }
 
-      // loop through placeArr and create an object for each
-      // of the array items, then add those objects to the
-      // possible places array
-      placeArr.forEach(function (place) {
+      response.forEach(function (place) {
         var obj = {};
         obj.display_name = place['display_name'];
         obj.geojson = normalizeGeoJSON(place['geojson']);
         possiblePlaces.push(obj);
       });
-
-      // take the possible places and use the callback
-      // to do something with it
-      callback(possiblePlaces);
+    }).then(function () {
+      return callback(possiblePlaces);
     }).catch(function (error) {
-      return Error(error);
+      return console.log('There has been a problem with the fetch operation: ', error);
     });
   };
 
   // make everything public
-  var module = {
+  var everything = {
     nominatim: nominatim,
     possiblePlaces: possiblePlaces,
     normalizeGeoJSON: normalizeGeoJSON,
-    getPlaceDataPromise: getPlaceData,
     getPlaceData: getPlaceData
   };
 
-  return module;
+  return everything;
 }();
-
-// this is exporting en to node as en.en
-if (typeof exports !== 'undefined') {
-  exports.en = en;
-}
