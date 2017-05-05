@@ -73,7 +73,6 @@ var en = function () {
       if (possiblePlaces.length > 0) {
         possiblePlaces.length = 0;
       }
-
       response.forEach(function (place) {
         var obj = {};
         obj.display_name = place['display_name'];

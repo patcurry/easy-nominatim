@@ -74,7 +74,6 @@ const en = (() => {
       })
       .then(response => {
         if (possiblePlaces.length > 0) { possiblePlaces.length = 0 }
-
         response.forEach(place => {
           const obj = {}
           obj.display_name = place['display_name']
