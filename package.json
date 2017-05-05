@@ -1,6 +1,6 @@
 {
   "name": "easy-nominatim",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "helper functions for open street maps nominatim",
   "main": "./easy-nominatim.js",
   "scripts": {
@@ -25,7 +25,9 @@
     "url": "https://github.com/patcurry/easy-nominatim/issues"
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "env"
+    ]
   },
   "homepage": "https://github.com/patcurry/easy-nominatim#readme",
   "devDependencies": {
