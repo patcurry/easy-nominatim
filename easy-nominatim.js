@@ -96,3 +96,7 @@ var en = function () {
 
   return everything;
 }();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports.en = en;
+}
